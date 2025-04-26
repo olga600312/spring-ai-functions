@@ -9,9 +9,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
  * Created by jt, Spring Framework Guru.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonClassDescription("Weather API request")
-public record WeatherRequest(@JsonProperty(required = true,
-        value = "location") @JsonPropertyDescription("The city and state e.g. San Francisco, CA") String location,
-        @JsonProperty(required = false) @JsonPropertyDescription("Optional State for US Cities Only. Use full name of State") String state,
-       @JsonProperty(required = false) @JsonPropertyDescription("Optional Country name") String country ){
+@JsonClassDescription("Weather API request using latitude and longitude")
+public record WeatherRequest(
+        @JsonProperty(required = true, value = "latitude") @JsonPropertyDescription("Latitude of desired location.") Double latitude,
+        @JsonProperty(required = true,value="longitude") @JsonPropertyDescription("Longitude of desired location.") String longitude) {
 }

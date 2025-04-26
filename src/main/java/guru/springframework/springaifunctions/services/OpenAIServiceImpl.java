@@ -4,6 +4,7 @@ package guru.springframework.springaifunctions.services;
 import guru.springframework.springaifunctions.functions.WeatherServiceFunction;
 import guru.springframework.springaifunctions.model.Answer;
 import guru.springframework.springaifunctions.model.Question;
+import guru.springframework.springaifunctions.model.WeatherRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.messages.Message;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -34,10 +35,16 @@ public class OpenAIServiceImpl implements OpenAIService {
                 .functionCallbacks(List.of(FunctionCallback.builder()
                                 .function("CurrentWeather", new WeatherServiceFunction(apiNinjasKey))
                                 .description("Get the current weather for a location")
+                                .inputType(WeatherRequest.class)
                       .build()))
                 .build();
 
-        Message userMessage = new PromptTemplate(question.question()).createMessage();
+        PromptTemplate promptTemplate = new PromptTemplate(
+                "Please provide the current weather information for the following coordinates: latitude={latitude}, longitude={longitude}."
+        );
+        promptTemplate.add("latitude", String.format("%.5f", question.latitude()));
+        promptTemplate.add("longitude", String.format("%.5f", question.longitude()));
+        Message userMessage = promptTemplate.createMessage();
 
         var response = openAiChatModel.call(new Prompt(List.of(userMessage), promptOptions));
 
